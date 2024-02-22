@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 
 function Game() {
-    //const [];
+    const [handP, setHandP] = useState([]);
 
     const deck = [];
+    const handO = []; //remove or move to make # of opponents variable?
     const suits = ["heart","diamond","club","spade"];
-    const names = ["ace","two","three","four","five","six","seven","eight","nine","ten","jack","queen","king"];
+    const names = ["ace","2","3","4","5","6","7","8","9","10","jack","queen","king"];
 
     /*useEffect(() => {
        console.log("test");
@@ -33,7 +34,6 @@ function Game() {
         }
     }
 
-    //shuffle
     function shuffle(deck) {
         let dLength = deck.length;
         let temp;
@@ -46,22 +46,55 @@ function Game() {
         }
     }
 
-    const handP = [];
 
-    function draw(hand, deck) {
-        hand.push(deck[deck.length - 1]);
+    function draw(hand, deck) {//change to be generally applicable
+        setHandP( [ ...handP, deck[deck.length - 1] ] );
         deck.pop();
-        console.log(hand[hand.length - 1]);//test
     }
 
-    //poker
+    /*function showHand(hand) { //not working first time
+                       for(var j = 0; j < handP.length; j++) {//test
+                            console.log(handP[j]);
+                        }
+        const handPlayer = document.getElementById('handPlayer');
+        for(var i = handP.length - 1; i < handP.length; i++) { //remove loop?
+            const img = document.createElement('img');
+            img.src = require("../deck/" + handP[i].name + "_of_" + handP[i].suit + "s.png");
+            handPlayer.appendChild(img);
+        }
 
-    return ( //a player draws 2 - 5 cards
-        <div className="App">
+    }*/
+
+    function poker() {
+
+        //opponent(s) by default are dealt five cards
+
+        //player by default is dealt five cards
+
+        //options to change cards(up to three) / bet(call, raise, fold)
+
+        /* Hand Hierarchy:
+            Straight Flush
+            Full House
+            Flush
+            Straight
+            Three of a Kind
+            Two Pair
+            High Card
+        */
+
+    }
+
+    return (//might have to change the key in the map
+        <div className="pokerTable">
             <header className="App-header">
-                <img src={require("../deck/queen_of_hearts.png")} alt="card" width="200px" length="250px"/>
-                <p>
-                </p>
+                <div id="handPlayer">Your Hand</div>
+                <div>
+                    {handP.map((e, index) => (
+                        <img key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                    ))}
+                </div>
+
                 <button onClick={() => draw(handP, deck)}>
                     Draw A Card
                 </button>
@@ -69,5 +102,5 @@ function Game() {
         </div>
   );
 }
-
+                //<div>{handP}</div>
 export default Game;
