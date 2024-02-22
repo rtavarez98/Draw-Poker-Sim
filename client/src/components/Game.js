@@ -1,17 +1,18 @@
-//import './App.css';
 import React, { useState, useEffect } from 'react';
 
 function Game() {
     const [handP, setHandP] = useState([]);
+    const [handO, setHandO] = useState([]);//remove or move to make # of opponents variable?
 
     const deck = [];
-    const handO = []; //remove or move to make # of opponents variable?
     const suits = ["heart","diamond","club","spade"];
     const names = ["ace","2","3","4","5","6","7","8","9","10","jack","queen","king"];
 
-    /*useEffect(() => {
-       console.log("test");
-    });*/
+    useEffect(() => { //handEval only works with useEffect since hands are up to date here
+        if(handEval(handP) > handEval(handO)) console.log("player wins");//change to display on screen
+        else if(handEval(handP) < handEval(handO)) console.log("opponent wins");
+        else console.log("tie");
+    });
 
     createDeck();
     shuffle(deck);
@@ -19,9 +20,7 @@ function Game() {
     function createDeck() {
         for(var i = 0; i < 4; i++) {
             for(var j = 0; j < 13; j++) {
-                let val;
-                if(j >= 9) val = 10; //remove?
-                else val = j + 1;
+                let val = j + 1;
 
                 let card = {
                     name: names[j],
@@ -46,30 +45,42 @@ function Game() {
         }
     }
 
+    function draw(hand, setHand, deck, cardNum) {
+        const newCards = [];
 
-    function draw(hand, deck) {//change to be generally applicable
-        setHandP( [ ...handP, deck[deck.length - 1] ] );
-        deck.pop();
-    }
-
-    /*function showHand(hand) { //not working first time
-                       for(var j = 0; j < handP.length; j++) {//test
-                            console.log(handP[j]);
-                        }
-        const handPlayer = document.getElementById('handPlayer');
-        for(var i = handP.length - 1; i < handP.length; i++) { //remove loop?
-            const img = document.createElement('img');
-            img.src = require("../deck/" + handP[i].name + "_of_" + handP[i].suit + "s.png");
-            handPlayer.appendChild(img);
+        for(var i = 0; i < cardNum; i++) {
+            newCards.push(deck[deck.length - 1]);
+            deck.pop();
         }
 
-    }*/
+        setHand( [ ...hand, ...newCards ] );
+    }
+
+    function handEval(hand) {
+        let highCard = {
+            name: "Unknown",
+            val: -1,
+            suit: "Unknown"
+        };
+
+        for(var i = 0; i < hand.length; i++) {
+            if(hand[i].val > highCard.val) highCard = hand[i];
+        }
+
+        return highCard.val;
+    }
 
     function poker() {
-
-        //opponent(s) by default are dealt five cards
+        /*Everyone gets five cards with two players posting the small blind and the big blind.
+        There’s a round of betting after the initial deal, then everyone discards however many cards they want (starting with the small blind and moving clockwise).
+        Each player gets replacement cards. Then there’s another round of betting.
+        Finally, each player who hasn’t folded goes to showdown and the best five card poker hand wins (using traditional poker hand rankings).*/
 
         //player by default is dealt five cards
+        draw(handP, setHandP, deck, 5);
+
+        //opponent(s) are dealt five cards
+        draw(handO, setHandO, deck, 5);
 
         //options to change cards(up to three) / bet(call, raise, fold)
 
@@ -83,24 +94,32 @@ function Game() {
             High Card
         */
 
+        //placeholder for evaluating the winner
     }
 
     return (//might have to change the key in the map
         <div className="pokerTable">
             <header className="App-header">
-                <div id="handPlayer">Your Hand</div>
-                <div>
+                <div id="handPlayer">
+                    Player Hand
                     {handP.map((e, index) => (
                         <img key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
                     ))}
                 </div>
 
-                <button onClick={() => draw(handP, deck)}>
-                    Draw A Card
+                <div id="handOpponent">
+                    Opponent Hand
+                    {handO.map((e, index) => (
+                        <img key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                    ))}
+                </div>
+
+                <button onClick={() => poker()}>
+                    Start The Game
                 </button>
             </header>
         </div>
   );
 }
-                //<div>{handP}</div>
+
 export default Game;
