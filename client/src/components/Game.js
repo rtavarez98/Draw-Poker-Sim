@@ -9,9 +9,13 @@ function Game() {
     const names = ["ace","2","3","4","5","6","7","8","9","10","jack","queen","king"];
 
     useEffect(() => { //handEval only works with useEffect since hands are up to date here
-        if(handEval(handP) > handEval(handO)) console.log("player wins");//change to display on screen
-        else if(handEval(handP) < handEval(handO)) console.log("opponent wins");
-        else console.log("tie");
+        if(handEval(handP)[0] > handEval(handO)[0]) console.log("player wins");//change to display on screen
+        else if(handEval(handP)[0] < handEval(handO)[0]) console.log("opponent wins");
+        else { //both players have same type of hand
+            if(handEval(handP)[1] > handEval(handO)[1])console.log("player wins");
+            else if(handEval(handP)[1] < handEval(handO)[1]) console.log("opponent wins");
+            else console.log("tie");
+        }
     });
 
     createDeck();
@@ -57,18 +61,45 @@ function Game() {
     }
 
     function handEval(hand) {
+        //return array w/ 1st index indicating type of hand and 2nd index indicating highest val
+        //haven't tested the "return array" approach yet
+        /* Hand Hierarchy:
+            6: Straight Flush
+            5: Full House
+            4: Flush
+            3: Straight
+            2: Three of a Kind
+            1: Two Pair
+            0: High Card
+        */
         let highCard = {
             name: "Unknown",
             val: -1,
             suit: "Unknown"
         };
 
+        const dupe = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+        let dupeMax = 0;
+        let flush = true;
+
         for(var i = 0; i < hand.length; i++) {
+            dupe[hand[i].val - 1]++;
+            if(flush && i < hand.length - 1 && hand[i].suit !== hand[i + 1].suit) flush = false; //simplify?
             if(hand[i].val > highCard.val) highCard = hand[i];
         }
 
-        return highCard.val;
+        for(var j = 0; j < dupe.length; j++) {
+            dupeMax = Math.max(dupeMax, dupe[j]);
+        }
+
+        //change to switch statement?
+        if(flush === true) return [4, highCard.val];
+        if(dupeMax === 3) return [2, highCard.val];
+        if(dupeMax === 2) return [1, highCard.val];
+        return [0, highCard.val];
     }
+
+
 
     function poker() {
         /*Everyone gets five cards with two players posting the small blind and the big blind.
@@ -84,15 +115,7 @@ function Game() {
 
         //options to change cards(up to three) / bet(call, raise, fold)
 
-        /* Hand Hierarchy:
-            Straight Flush
-            Full House
-            Flush
-            Straight
-            Three of a Kind
-            Two Pair
-            High Card
-        */
+
 
         //placeholder for evaluating the winner
     }
