@@ -131,42 +131,7 @@ function Game() {
         Finally, each player who hasn’t folded goes to showdown and the best five card poker hand wins (using traditional poker hand rankings).*/
 
         //player by default is dealt five cards
-        //draw(handP, setHandP, deck, 5)
-        const newCardsP = [];
-
-        let f = {
-            name: "8",
-            val: 8,
-            suit: "club"
-        };
-        let g = {
-            name: "10",
-            val: 10,
-            suit: "spade"
-        };
-        let h = {
-            name: "8",
-            val: 8,
-            suit: "heart"
-        };
-        let i = {
-            name: "8",
-            val: 8,
-            suit: "diamond"
-        };
-        let j = {
-            name: "8",
-            val: 8,
-            suit: "diamond"
-        };
-
-        newCardsP.push(f);
-        newCardsP.push(g);
-        newCardsP.push(h);
-        newCardsP.push(i);
-        newCardsP.push(j);
-
-        setHandP( [ ...handP, ...newCardsP ] );
+        draw(handP, setHandP, deck, 5)
 
         //opponent(s) are dealt five cards
         draw(handO, setHandO, deck, 5);
