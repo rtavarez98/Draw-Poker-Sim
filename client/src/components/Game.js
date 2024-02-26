@@ -60,16 +60,18 @@ function Game() {
         setHand( [ ...hand, ...newCards ] );
     }
 
-    function handEval(hand) {
+    function handEval(hand) { //highest card of a pair etc. not accounted for
         //return array w/ 1st index indicating type of hand and 2nd index indicating highest val
         //haven't tested the "return array" approach yet
         /* Hand Hierarchy:
-            6: Straight Flush
-            5: Full House
-            4: Flush
-            3: Straight
-            2: Three of a Kind
-            1: Two Pair
+            8: Straight Flush
+            7: Four of a Kind
+            6: Full House
+            5: Flush
+            4: Straight
+            3: Three of a Kind
+            2: Two Pair
+            1: One Pair
             0: High Card
         */
         let highCard = {
@@ -78,23 +80,44 @@ function Game() {
             suit: "Unknown"
         };
 
+        const handStraight = [0,0,0,0,0];
         const dupe = [0,0,0,0,0,0,0,0,0,0,0,0,0];
         let dupeMax = 0;
+        let dupeMaxTwo = -1;
         let flush = true;
+        let straight = true;
 
         for(var i = 0; i < hand.length; i++) {
+            handStraight[i] = hand[i].val;
             dupe[hand[i].val - 1]++;
             if(flush && i < hand.length - 1 && hand[i].suit !== hand[i + 1].suit) flush = false; //simplify?
             if(hand[i].val > highCard.val) highCard = hand[i];
         }
 
         for(var j = 0; j < dupe.length; j++) {
+            if(dupe[j] > 0 && dupe[j] >= dupeMax) dupeMaxTwo = dupeMax;
             dupeMax = Math.max(dupeMax, dupe[j]);
+            //add a line to assign highCard
+        }
+
+        //reorder straight array to lowest to highest, then iterate to determine straight
+        handStraight.sort( (a, b) => {return a - b});
+
+        for(var k = 1; k < hand.length; k++) {//bruteforce
+            if(handStraight[k] !== handStraight[k - 1] - 1) {
+                straight = false;
+                break;
+            }
         }
 
         //change to switch statement?
-        if(flush === true) return [4, highCard.val];
-        if(dupeMax === 3) return [2, highCard.val];
+        if(flush === true && straight === true) return [8, highCard.val];
+        if(dupeMax === 4) return [7, highCard.val];
+        if(dupeMaxTwo === 2 && dupeMax === 3) return [6, highCard.val];
+        if(flush === true) return [5, highCard.val];
+        if(straight === true) return [4, highCard.val];
+        if(dupeMax === 3) return [3, highCard.val];
+        if(dupeMaxTwo === 2 && dupeMax === 2) return [2, highCard.val];
         if(dupeMax === 2) return [1, highCard.val];
         return [0, highCard.val];
     }
@@ -108,7 +131,42 @@ function Game() {
         Finally, each player who hasn’t folded goes to showdown and the best five card poker hand wins (using traditional poker hand rankings).*/
 
         //player by default is dealt five cards
-        draw(handP, setHandP, deck, 5);
+        //draw(handP, setHandP, deck, 5)
+        const newCardsP = [];
+
+        let f = {
+            name: "8",
+            val: 8,
+            suit: "club"
+        };
+        let g = {
+            name: "10",
+            val: 10,
+            suit: "spade"
+        };
+        let h = {
+            name: "8",
+            val: 8,
+            suit: "heart"
+        };
+        let i = {
+            name: "8",
+            val: 8,
+            suit: "diamond"
+        };
+        let j = {
+            name: "8",
+            val: 8,
+            suit: "diamond"
+        };
+
+        newCardsP.push(f);
+        newCardsP.push(g);
+        newCardsP.push(h);
+        newCardsP.push(i);
+        newCardsP.push(j);
+
+        setHandP( [ ...handP, ...newCardsP ] );
 
         //opponent(s) are dealt five cards
         draw(handO, setHandO, deck, 5);
