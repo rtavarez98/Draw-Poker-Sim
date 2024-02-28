@@ -9,11 +9,14 @@ function Game() {
     const names = ["ace","2","3","4","5","6","7","8","9","10","jack","queen","king"];
 
     useEffect(() => { //handEval only works with useEffect since hands are up to date here
-        if(handEval(handP)[0] > handEval(handO)[0]) console.log("player wins");//change to display on screen
-        else if(handEval(handP)[0] < handEval(handO)[0]) console.log("opponent wins");
+        const valP = handEval(handP);
+        const valO = handEval(handO);
+        console.log(valP + " VS " + valO);//test
+        if(valP[0] > valO[0]) console.log("player wins");//change to display on screen
+        else if(valP[0] < valO[0]) console.log("opponent wins");
         else { //both players have same type of hand
-            if(handEval(handP)[1] > handEval(handO)[1])console.log("player wins");
-            else if(handEval(handP)[1] < handEval(handO)[1]) console.log("opponent wins");
+            if(valP[1] > valO[1])console.log("player wins");
+            else if(valP[1] < valO[1]) console.log("opponent wins");
             else console.log("tie");
         }
     });
@@ -35,6 +38,7 @@ function Game() {
                 deck.push(card);
             }
         }
+
     }
 
     function shuffle(deck) {
@@ -60,9 +64,8 @@ function Game() {
         setHand( [ ...hand, ...newCards ] );
     }
 
-    function handEval(hand) { //highest card of a pair etc. not accounted for
+    function handEval(hand) {
         //return array w/ 1st index indicating type of hand and 2nd index indicating highest val
-        //haven't tested the "return array" approach yet
         /* Hand Hierarchy:
             8: Straight Flush
             7: Four of a Kind
@@ -96,8 +99,10 @@ function Game() {
 
         for(var j = 0; j < dupe.length; j++) {
             if(dupe[j] > 0 && dupe[j] >= dupeMax) dupeMaxTwo = dupeMax;
-            dupeMax = Math.max(dupeMax, dupe[j]);
-            //add a line to assign highCard
+            if(dupe[j] > 1) {
+                dupeMax = Math.max(dupeMax, dupe[j]);
+                highCard.val = j + 1;
+            }
         }
 
         //reorder straight array to lowest to highest, then iterate to determine straight
@@ -149,14 +154,14 @@ function Game() {
                 <div id="handPlayer">
                     Player Hand
                     {handP.map((e, index) => (
-                        <img key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                        <input type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
                     ))}
                 </div>
 
                 <div id="handOpponent">
                     Opponent Hand
                     {handO.map((e, index) => (
-                        <img key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                        <input type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
                     ))}
                 </div>
 
@@ -164,6 +169,20 @@ function Game() {
                     Start The Game
                 </button>
             </header>
+            <div id="gameOptions">
+                <button onClick={() => console.log("test")}>
+                    Call
+                </button>
+                <button onClick={() => console.log("test")}>
+                    Raise
+                </button>
+                <button onClick={() => console.log("test")}>
+                    Fold
+                </button>
+                <button onClick={() => console.log("test")}>
+                    Change Cards
+                </button>
+            </div>
         </div>
   );
 }
