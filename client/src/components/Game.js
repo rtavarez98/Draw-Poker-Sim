@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function Game() {
     const [handP, setHandP] = useState([]);
     const [handO, setHandO] = useState([]);//remove or move to make # of opponents variable?
+    const changeCards = [];
 
     const deck = [];
     const suits = ["heart","diamond","club","spade"];
@@ -127,7 +128,21 @@ function Game() {
         return [0, highCard.val];
     }
 
+    function change(hand, setHand, changeCards) {//hide button after use
+        changeCards.sort( (a, b) => {return a - b});
 
+        let j = 0;
+        let handNew = hand.map( (e, index) => {
+            if(index === changeCards[j]) {
+                e = deck[deck.length - 1];
+                deck.pop();
+                j++;
+            }
+            return e;
+        });
+
+        setHand(handNew);
+    }
 
     function poker() {
         /*Everyone gets five cards with two players posting the small blind and the big blind.
@@ -148,13 +163,13 @@ function Game() {
         //placeholder for evaluating the winner
     }
 
-    return (//might have to change the key in the map
+    return (//might have to change the key in the map; occasional bug adding a card to the hand when changing cards
         <div className="pokerTable">
             <header className="App-header">
                 <div id="handPlayer">
                     Player Hand
                     {handP.map((e, index) => (
-                        <input type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                        <input onClick={() => changeCards.push(index)} type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
                     ))}
                 </div>
 
@@ -179,7 +194,7 @@ function Game() {
                 <button onClick={() => console.log("test")}>
                     Fold
                 </button>
-                <button onClick={() => console.log("test")}>
+                <button onClick={() => change(handP, setHandP, changeCards)}>
                     Change Cards
                 </button>
             </div>
