@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function Game() {
     const [handP, setHandP] = useState([]);
+    const [chipsP, setChipsP] = useState();
+    const [betP, setBetP] = useState();
     const [handO, setHandO] = useState([]);//remove or move to make # of opponents variable?
+    const [chipsO, setChipsO] = useState();//remove or move to make # of opponents variable?
+    const [betO, setBetO] = useState();//remove or move to make # of opponents variable?
     const changeCards = [];
+    let winner = useRef();//current value not being displayed
 
     const deck = [];
     const suits = ["heart","diamond","club","spade"];
@@ -12,18 +17,15 @@ function Game() {
     useEffect(() => { //handEval only works with useEffect since hands are up to date here
         const valP = handEval(handP);
         const valO = handEval(handO);
-        console.log(valP + " VS " + valO);//test
-        if(valP[0] > valO[0]) console.log("player wins");//change to display on screen
-        else if(valP[0] < valO[0]) console.log("opponent wins");
+        if(valP[0] > valO[0]) winner.current = "player wins";
+        else if(valP[0] < valO[0]) winner.current = "opponent wins";
         else { //both players have same type of hand
-            if(valP[1] > valO[1])console.log("player wins");
-            else if(valP[1] < valO[1]) console.log("opponent wins");
-            else console.log("tie");
+            if(valP[1] > valO[1]) winner.current = "player wins";
+            else if(valP[1] < valO[1]) winner.current = "opponent wins";
+            else winner.current = "tie";
         }
+        console.log(winner.current);//test
     });
-
-    createDeck();
-    shuffle(deck);
 
     function createDeck() {
         for(var i = 0; i < 4; i++) {
@@ -42,6 +44,9 @@ function Game() {
 
     }
 
+    /*
+    * @param {Object[]} deck - group of playing cards being shuffled
+    */
     function shuffle(deck) {
         let dLength = deck.length;
         let temp;
@@ -54,6 +59,12 @@ function Game() {
         }
     }
 
+    /*
+    * @param {Object[]} hand - where the cards are being drawn to
+    * @param {Object[]} setHand - useState value used to alter the hand
+    * @param {Object[]} deck - where cards are being drawn from
+    * @param {number} cardNum - number of cards to be drawn
+    */
     function draw(hand, setHand, deck, cardNum) {
         const newCards = [];
 
@@ -65,44 +76,41 @@ function Game() {
         setHand( [ ...hand, ...newCards ] );
     }
 
+    /*
+    * Evaluates a hand's value by using the following hierarchy...
+    *   8: Straight Flush
+    *   7: Four of a Kind
+    *   6: Full House
+    *   5: Flush
+    *   4: Straight
+    *   3: Three of a Kind
+    *   2: Two Pair
+    *   1: One Pair
+    *   0: High Card
+    *
+    * @param {Object[]} hand - group of cards to be evaluated
+    * @return {number[]} whose first element indicates the hand type and the second element indicates the highest valued card
+    */
     function handEval(hand) {
-        //return array w/ 1st index indicating type of hand and 2nd index indicating highest val
-        /* Hand Hierarchy:
-            8: Straight Flush
-            7: Four of a Kind
-            6: Full House
-            5: Flush
-            4: Straight
-            3: Three of a Kind
-            2: Two Pair
-            1: One Pair
-            0: High Card
-        */
-        let highCard = {
-            name: "Unknown",
-            val: -1,
-            suit: "Unknown"
-        };
-
         const handStraight = [0,0,0,0,0];
         const dupe = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+        let highCard = -1;
         let dupeMax = 0;
         let dupeMaxTwo = -1;
-        let flush = true;
-        let straight = true;
+        let flush = true, straight = true;
 
         for(var i = 0; i < hand.length; i++) {
             handStraight[i] = hand[i].val;
             dupe[hand[i].val - 1]++;
             if(flush && i < hand.length - 1 && hand[i].suit !== hand[i + 1].suit) flush = false; //simplify?
-            if(hand[i].val > highCard.val) highCard = hand[i];
+            if(hand[i].val > highCard) highCard = hand[i].val;
         }
 
         for(var j = 0; j < dupe.length; j++) {
             if(dupe[j] > 0 && dupe[j] >= dupeMax) dupeMaxTwo = dupeMax;
             if(dupe[j] > 1) {
                 dupeMax = Math.max(dupeMax, dupe[j]);
-                highCard.val = j + 1;
+                highCard = j + 1;
             }
         }
 
@@ -117,17 +125,24 @@ function Game() {
         }
 
         //change to switch statement?
-        if(flush === true && straight === true) return [8, highCard.val];
-        if(dupeMax === 4) return [7, highCard.val];
-        if(dupeMaxTwo === 2 && dupeMax === 3) return [6, highCard.val];
-        if(flush === true) return [5, highCard.val];
-        if(straight === true) return [4, highCard.val];
-        if(dupeMax === 3) return [3, highCard.val];
-        if(dupeMaxTwo === 2 && dupeMax === 2) return [2, highCard.val];
-        if(dupeMax === 2) return [1, highCard.val];
-        return [0, highCard.val];
+        if(flush === true && straight === true) return [8, highCard];
+        if(dupeMax === 4) return [7, highCard];
+        if(dupeMaxTwo === 2 && dupeMax === 3) return [6, highCard];
+        if(flush === true) return [5, highCard];
+        if(straight === true) return [4, highCard];
+        if(dupeMax === 3) return [3, highCard];
+        if(dupeMaxTwo === 2 && dupeMax === 2) return [2, highCard];
+        if(dupeMax === 2) return [1, highCard];
+        return [0, highCard];
     }
 
+    /*
+    * Changes out a specified amount of cards from a hand
+    *
+    * @param {Object[]} hand - group of cards to be altered
+    * @param {Object[]} setHand - useState value used to alter the hand
+    * @param {number[]} changeCards - amount of cards to be swapped out
+    */
     function change(hand, setHand, changeCards) {//hide button after use
         changeCards.sort( (a, b) => {return a - b});
 
@@ -144,11 +159,23 @@ function Game() {
         setHand(handNew);
     }
 
+    function bet(ante, setAnte, newAnte) {//min bet is 100
+        setAnte(ante + newAnte);
+    }
+
     function poker() {
         /*Everyone gets five cards with two players posting the small blind and the big blind.
         There’s a round of betting after the initial deal, then everyone discards however many cards they want (starting with the small blind and moving clockwise).
         Each player gets replacement cards. Then there’s another round of betting.
         Finally, each player who hasn’t folded goes to showdown and the best five card poker hand wins (using traditional poker hand rankings).*/
+        createDeck();
+        shuffle(deck);
+
+        setChipsP(5000);
+        setChipsO(5000);
+
+        setBetP(0);
+        setBetO(0);
 
         //player by default is dealt five cards
         draw(handP, setHandP, deck, 5)
@@ -156,16 +183,26 @@ function Game() {
         //opponent(s) are dealt five cards
         draw(handO, setHandO, deck, 5);
 
-        //options to change cards(up to three) / bet(call, raise, fold)
+        //first betting round
+        //opponent calls
+        bet(0, setBetO, 100);
 
+        //opponent changes cards
+        //await player input
 
+        //second betting round
+        //await player input
 
+        //showdown
         //placeholder for evaluating the winner
+        document.getElementById("gameResult").hidden = false;
     }
 
     return (//might have to change the key in the map; occasional bug adding a card to the hand when changing cards
         <div className="pokerTable">
             <header className="App-header">
+                <p>Player Chips: {chipsP}</p>
+                <p>Bet: {betP}</p>
                 <div id="handPlayer">
                     Player Hand
                     {handP.map((e, index) => (
@@ -173,6 +210,8 @@ function Game() {
                     ))}
                 </div>
 
+                <p>Opponent Chips: {chipsO}</p>
+                <p>Bet: {betO}</p>
                 <div id="handOpponent">
                     Opponent Hand
                     {handO.map((e, index) => (
@@ -197,6 +236,9 @@ function Game() {
                 <button onClick={() => change(handP, setHandP, changeCards)}>
                     Change Cards
                 </button>
+            </div>
+            <div id="gameResult" hidden={true}>
+                {winner.current}
             </div>
         </div>
   );
