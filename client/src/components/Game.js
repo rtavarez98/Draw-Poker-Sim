@@ -4,26 +4,36 @@ function Game() {
     const [handP, setHandP] = useState([]);
     const [chipsP, setChipsP] = useState();
     const [betP, setBetP] = useState();
+    const [betNum, setBetNum] = useState();
+    const [fold, setFold] = useState();
     const [handO, setHandO] = useState([]);//remove or move to make # of opponents variable?
     const [chipsO, setChipsO] = useState();//remove or move to make # of opponents variable?
     const [betO, setBetO] = useState();//remove or move to make # of opponents variable?
-    const changeCards = [];
+    const changeCards = [];//limit to five + eliminate duplicates?
+    let turns = 0;
     let winner = useRef();//current value not being displayed
 
     const deck = [];
     const suits = ["heart","diamond","club","spade"];
     const names = ["ace","2","3","4","5","6","7","8","9","10","jack","queen","king"];
 
+    createDeck();
+    shuffle(deck);
+
     useEffect(() => { //handEval only works with useEffect since hands are up to date here
         const valP = handEval(handP);
         const valO = handEval(handO);
-        if(valP[0] > valO[0]) winner.current = "player wins";
-        else if(valP[0] < valO[0]) winner.current = "opponent wins";
-        else { //both players have same type of hand
-            if(valP[1] > valO[1]) winner.current = "player wins";
-            else if(valP[1] < valO[1]) winner.current = "opponent wins";
-            else winner.current = "tie";
+        if(fold) winner.current = "opponent wins";
+        else{
+             if(valP[0] > valO[0]) winner.current = "player wins";
+             else if(valP[0] < valO[0]) winner.current = "opponent wins";
+             else { //both players have same type of hand
+                 if(valP[1] > valO[1]) winner.current = "player wins";
+                 else if(valP[1] < valO[1]) winner.current = "opponent wins";
+                 else winner.current = "tie";
+             }
         }
+
         console.log(winner.current);//test
     });
 
@@ -157,9 +167,11 @@ function Game() {
         });
 
         setHand(handNew);
+        document.getElementById("changeBtn").hidden = true;
     }
 
-    function bet(ante, setAnte, newAnte) {//min bet is 100
+    function bet(ante, setAnte, newAnte, chips, setChips) {//min bet should be 100
+        setChips(chips - newAnte);
         setAnte(ante + newAnte);
     }
 
@@ -168,37 +180,39 @@ function Game() {
         There’s a round of betting after the initial deal, then everyone discards however many cards they want (starting with the small blind and moving clockwise).
         Each player gets replacement cards. Then there’s another round of betting.
         Finally, each player who hasn’t folded goes to showdown and the best five card poker hand wins (using traditional poker hand rankings).*/
-        createDeck();
-        shuffle(deck);
+        document.getElementById("startBtn").hidden = true;
 
         setChipsP(5000);
-        setChipsO(5000);
-
         setBetP(0);
-        setBetO(0);
 
-        //player by default is dealt five cards
         draw(handP, setHandP, deck, 5)
-
-        //opponent(s) are dealt five cards
         draw(handO, setHandO, deck, 5);
 
         //first betting round
         //opponent calls
-        bet(0, setBetO, 100);
+        bet(0, setBetO, 100, 5000, setChipsO);
 
         //opponent changes cards
-        //await player input
-
-        //second betting round
-        //await player input
-
-        //showdown
-        //placeholder for evaluating the winner
-        document.getElementById("gameResult").hidden = false;
     }
 
-    return (//might have to change the key in the map; occasional bug adding a card to the hand when changing cards
+    function pokerTurn() {
+        //player input triggers method
+        turns++;
+
+        //opponent calls, raises or folds
+
+        //showdown
+        if(turns >= 2) {
+            document.getElementById("gameOptions").hidden = true;
+            document.getElementById("gameResult").hidden = false;
+        }
+    }
+
+    /*might have to change the key in the map;
+     occasional bug adding a card to the hand when changing cards;
+     move div onClick=pokerTurn() to occur only on button click;
+     raise not working correctly*/
+    return (
         <div className="pokerTable">
             <header className="App-header">
                 <p>Player Chips: {chipsP}</p>
@@ -219,24 +233,25 @@ function Game() {
                     ))}
                 </div>
 
-                <button onClick={() => poker()}>
+                <button id="startBtn" onClick={() => poker()}>
                     Start The Game
                 </button>
             </header>
-            <div id="gameOptions">
-                <button onClick={() => console.log("test")}>
+            <div id="gameOptions" onClick={() => pokerTurn()}>
+                <button onClick={() => bet(betP, setBetP, betO - betP, chipsP, setChipsP)}>
                     Call
                 </button>
-                <button onClick={() => console.log("test")}>
+                <button onClick={() => bet(betP, setBetP, betNum, chipsP, setChipsP)}>
                     Raise
                 </button>
-                <button onClick={() => console.log("test")}>
+                <input type="number" onChange={e => setBetNum(e)} placeholder="Enter Bet Amount"></input>
+                <button onClick={() => setFold(true)}>
                     Fold
                 </button>
-                <button onClick={() => change(handP, setHandP, changeCards)}>
-                    Change Cards
-                </button>
             </div>
+            <button id="changeBtn" onClick={() => change(handP, setHandP, changeCards)}>
+                Change Cards
+            </button>
             <div id="gameResult" hidden={true}>
                 {winner.current}
             </div>
