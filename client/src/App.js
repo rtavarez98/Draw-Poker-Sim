@@ -1,19 +1,23 @@
-import KoH from './deck/king_of_hearts.png';
-import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Home from './components/Home';//swap 'components' to 'pages'
+import Login from './components/Login';
+import Register from './components/Register';
+import Game from './components/Game';
 
 function App() {
 
     let rand = Math.random() * 10;
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={KoH} alt="king_of_hearts" width="200px" length="250px"/>
-                <p id="rand">
-                    Random Number: {rand}
-                </p>
-            </header>
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />}/>
+                <Route path="/Game" element={<Game />}/>
+                <Route path="/Login" element={<Login />}/>
+                <Route path="/Register" element={<Register />}/>
+            </Routes>
+        </BrowserRouter>
+
   );
 }
 

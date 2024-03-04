@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from "react-router-dom";
 
 function Game() {
+    const navigate = useNavigate();
     const [handP, setHandP] = useState([]);
     const [chipsP, setChipsP] = useState();
     const [betP, setBetP] = useState();
@@ -254,6 +256,7 @@ function Game() {
             </button>
             <div id="gameResult" hidden={true}>
                 {winner.current}
+                <button onClick={() => navigate('/')}>Exit</button>
             </div>
         </div>
   );
