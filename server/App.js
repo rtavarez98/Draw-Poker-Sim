@@ -1,12 +1,13 @@
-function App() {
-    //placeholder for backend functions
-    /* add functions for...
-    * creating accounts
-    * accessing account data
-    * incrementing wins by 1
-    * incrementing losses by 1
-    * incrementing ties by 1
-    */
-}
+const express = require('express');
+const app = express();
+const mainRoute = require('/routes/routes');
 
-export default App;
+
+//process.env.PORT;
+const uri = process.env.URI;
+
+//connect to db
+mongoose.connect(uri);
+
+//routes
+app.use('/', mainRoute);
