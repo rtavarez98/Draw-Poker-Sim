@@ -1,13 +1,30 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
-const mainRoute = require('/routes/routes');
+const mainRoute = require('./routes/routes');
 
+require('dotenv').config({ path: './.env' });
+app.use(cors());
+app.use(express.json());
 
-//process.env.PORT;
+const port = process.env.PORT;
 const uri = process.env.URI;
+const connectDB = async () => {
+    try {
+        const db = await mongoose.connect(uri);
+        console.log("MongoDB Connected:" + db.connection.host)
+    } catch(err) {
+        console.log(err);
+    }
+}
 
 //connect to db
-mongoose.connect(uri);
+connectDB();
 
 //routes
 app.use('/', mainRoute);
+
+app.listen(port, () => {
+    console.log("App is listening on port " + port)
+});

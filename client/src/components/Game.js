@@ -22,17 +22,32 @@ function Game() {
     createDeck();
     shuffle(deck);
 
-    useEffect(() => { //handEval only works with useEffect since hands are up to date here
+    useEffect(() => { //might have to move api calls somewhere else
         const valP = handEval(handP);
         const valO = handEval(handO);
         if(fold) winner.current = "opponent wins";
         else{
-             if(valP[0] > valO[0]) winner.current = "player wins";
-             else if(valP[0] < valO[0]) winner.current = "opponent wins";
+             if(valP[0] > valO[0]) {
+                winner.current = "player wins";
+                //api call
+             }
+             else if(valP[0] < valO[0]) {
+                winner.current = "opponent wins";
+                //api call
+             }
              else { //both players have same type of hand
-                 if(valP[1] > valO[1]) winner.current = "player wins";
-                 else if(valP[1] < valO[1]) winner.current = "opponent wins";
-                 else winner.current = "tie";
+                 if(valP[1] > valO[1]) {
+                    winner.current = "player wins";
+                    //api call
+                 }
+                 else if(valP[1] < valO[1]) {
+                    winner.current = "opponent wins";
+                    //api call
+                 }
+                 else {
+                    winner.current = "tie";
+                    //api call
+                 }
              }
         }
 
