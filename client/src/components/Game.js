@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Game() {
     const navigate = useNavigate();
@@ -222,6 +223,17 @@ function Game() {
         if(turns >= 2) {
             document.getElementById("gameOptions").hidden = true;
             document.getElementById("gameResult").hidden = false;
+
+            //if signed in
+            if(winner.current === "opponent wins") {
+                axios.patch("http://localhost:5000/loss", {});//test
+            }
+            else if(winner.current === "player wins") {
+                axios.patch("http://localhost:5000/win", {});//test
+            }
+            else {
+                axios.patch("http://localhost:5000/tie", {});//test
+            }
         }
     }
 

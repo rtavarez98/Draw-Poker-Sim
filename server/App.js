@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
+const { authToken } = require('./middleware/authMiddleware');
 const mainRoute = require('./routes/routes');
 
 require('dotenv').config({ path: './.env' });
@@ -21,6 +22,9 @@ const connectDB = async () => {
 
 //connect to db
 connectDB();
+
+//verify token
+app.use(authToken);//test
 
 //routes
 app.use('/', mainRoute);

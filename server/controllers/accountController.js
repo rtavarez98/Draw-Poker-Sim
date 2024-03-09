@@ -50,4 +50,4 @@ async function tieIncrement(req, res) {//test
     }
 }
 
-module.exports = {createAccount, getAccount, winIncrement, lossIncrement, tieIncrement}
+module.exports = {createAccount, getAccount, winIncrement, lossIncrement, tieIncrement};

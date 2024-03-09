@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';// remove some?
+import React, { useContext, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import UserContext from './../UserContext';
 
 function Login() {
     const navigate = useNavigate();
+    const {loginCall} = useContext(UserContext);
     const [loginData, setLoginData] = useState({
         username: "",
         password: ""
@@ -11,11 +12,7 @@ function Login() {
 
     const handleSubmit = async e => {//replace localhost w/ something else
         e.preventDefault();
-        axios.get("http://localhost:5000/", { params: {
-            username: loginData.username,
-            password: loginData.password
-        }})
-        .then(res => console.log(res.data));
+        let res = await loginCall(loginData);//test
         //.then(navigate("/Game"));//add some sort of buffer later
         //validate login
     };
