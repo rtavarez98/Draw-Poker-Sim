@@ -16,28 +16,49 @@ function App() {
     //add loggedIn value?
 
     //use useEffect to assign all values to localStorage w/ 'window.localStorage.setItem'
+    useEffect(() => {
+        window.localStorage.setItem('token', token);
+    },[token]);
 
     //move axios calls for logging in + signing in here? (async?)
     //use useContext so login + register pages can access below
 
     const loginCall = async (loginData) => {
-        /*await axios.get("http://localhost:5000/", { params: {
-            username: loginData.username,
-            password: loginData.password
-        }})*/
-        //if account found, assign values like in useEffect
+        try{
+            let res = await axios.get("http://localhost:5000/", { params: {
+                username: loginData.username,
+                password: loginData.password
+            }})
+            .catch(error => console.log('wrong username or password'));
+
+            if(typeof res !== "undefined") {
+                setToken(res.data.token);
+            }
+        } catch(err) {
+            console.error(err);
+        }
+
     };
 
     const registerCall = async (accountData) => {
-        /*await axios.post("http://localhost:5000/newAcc", {
-            username: accountData.username,
-            password: accountData.password
-        })*/
+        try {
+            let res = await axios.post("http://localhost:5000/newAcc", {
+                username: accountData.username,
+                password: accountData.password
+            })
+            .catch(error => console.log('wrong username already in use'));
+
+            if(typeof res !== "undefined") {
+                setToken(res.data.token);
+            }
+        } catch(err) {
+            console.error(err);
+        }
     };
 
     return (
         <BrowserRouter>
-            <UserContext.Provider value={{loginCall, registerCall}}>
+            <UserContext.Provider value={{token, loginCall, registerCall}}>
                 <Routes>
                     <Route path="/" element={<Home />}/>
                     <Route path="/Game" element={<Game />}/>
@@ -48,5 +69,5 @@ function App() {
         </BrowserRouter>
   );
 }
-//<useContext.Provider value={{accountData, loginCall, registerCall}}>
+
 export default App;

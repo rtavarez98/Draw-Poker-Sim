@@ -12,9 +12,8 @@ function Login() {
 
     const handleSubmit = async e => {//replace localhost w/ something else
         e.preventDefault();
-        let res = await loginCall(loginData);//test
-        //.then(navigate("/Game"));//add some sort of buffer later
-        //validate login
+        let res = await loginCall(loginData);
+        //.then(navigate("/Game"));
     };
 
     return (

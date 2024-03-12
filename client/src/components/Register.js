@@ -13,7 +13,7 @@ function Register() {
     const handleSubmit = async e => {//replace localhost w/ something else
         e.preventDefault();
         let res = await registerCall(accountData);//test
-        //.then(navigate("/Game"));//add some sort of buffer later
+        //.then(navigate("/Game"));
     };
 
     return (
