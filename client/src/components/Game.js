@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import UserContext from './../UserContext';
 
 function Game() {
     const navigate = useNavigate();
+    const {token} = useContext(UserContext);
+    const {winCall} = useContext(UserContext);
+    const {lossCall} = useContext(UserContext);
+    const {tieCall} = useContext(UserContext);
+
     const [handP, setHandP] = useState([]);
     const [chipsP, setChipsP] = useState();
     const [betP, setBetP] = useState();
@@ -23,31 +28,26 @@ function Game() {
     createDeck();
     shuffle(deck);
 
-    useEffect(() => { //might have to move api calls somewhere else
+    useEffect(() => {
         const valP = handEval(handP);
         const valO = handEval(handO);
         if(fold) winner.current = "opponent wins";
         else{
              if(valP[0] > valO[0]) {
                 winner.current = "player wins";
-                //api call
              }
              else if(valP[0] < valO[0]) {
                 winner.current = "opponent wins";
-                //api call
              }
              else { //both players have same type of hand
                  if(valP[1] > valO[1]) {
                     winner.current = "player wins";
-                    //api call
                  }
                  else if(valP[1] < valO[1]) {
                     winner.current = "opponent wins";
-                    //api call
                  }
                  else {
                     winner.current = "tie";
-                    //api call
                  }
              }
         }
@@ -213,7 +213,7 @@ function Game() {
         //opponent changes cards
     }
 
-    function pokerTurn() {
+    async function pokerTurn() {
         //player input triggers method
         turns++;
 
@@ -224,16 +224,18 @@ function Game() {
             document.getElementById("gameOptions").hidden = true;
             document.getElementById("gameResult").hidden = false;
 
-            //if signed in
-            if(winner.current === "opponent wins") {
-                axios.patch("http://localhost:5000/loss", {});//test
+            if(token !== '') {
+                if(winner.current === "opponent wins") {
+                    let res = await lossCall();//test
+                }
+                else if(winner.current === "player wins") {
+                    let res = await winCall();//test
+                }
+                else {
+                    let res = await tieCall();//test
+                }
             }
-            else if(winner.current === "player wins") {
-                axios.patch("http://localhost:5000/win", {});//test
-            }
-            else {
-                axios.patch("http://localhost:5000/tie", {});//test
-            }
+
         }
     }
 

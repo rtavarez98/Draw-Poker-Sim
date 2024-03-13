@@ -10,10 +10,10 @@ function Register() {
         password: ""
     });
 
-    const handleSubmit = async e => {//replace localhost w/ something else
+    const handleSubmit = async e => {
         e.preventDefault();
-        let res = await registerCall(accountData);//test
-        //.then(navigate("/Game"));
+        let res = await registerCall(accountData)
+        .then(navigate("/Game"));
     };
 
     return (

@@ -5,7 +5,6 @@ SECRET_KEY = 'secret'; //placeholder
 
 async function createAccount(req, res) {
     try {
-        //check if username exists + throw error if true
         let usernameExists = await accounts.findOne({username: req.body.username});
         if(usernameExists !== null) {
             throw error;
@@ -18,14 +17,14 @@ async function createAccount(req, res) {
             losses: 0,
             ties: 0
         });
-        let token = jwt.sign({username: newAcc.username, wins: newAcc.wins, losses: newAcc.wins, ties: newAcc.ties}, SECRET_KEY);
-        res.status(201).send({token});
+        let token = jwt.sign({userId: newAcc._id, username: newAcc.username, wins: newAcc.wins, losses: newAcc.wins, ties: newAcc.ties}, SECRET_KEY);
+        res.status(201).send({token, userId: newAcc._id, wins: newAcc.wins, losses: newAcc.wins, ties: newAcc.ties});
     } catch(err) {
         res.status(404).send({error: err});
     }
 }
 
-async function getAccount(req, res) {//add check if can't find account
+async function getAccount(req, res) {
     try{
         let acc = await accounts.findOne({username: req.query.username, password: req.query.password});
 
@@ -33,32 +32,39 @@ async function getAccount(req, res) {//add check if can't find account
             throw error();
         }
 
-        let token = jwt.sign({username: acc.username, wins: acc.wins, losses: acc.wins, ties: acc.ties}, SECRET_KEY);
-        return res.send({token})
+        let token = jwt.sign({userId: acc._id, username: acc.username, wins: acc.wins, losses: acc.wins, ties: acc.ties}, SECRET_KEY);
+        return res.send({token, userId: acc._id, wins: acc.wins, losses: acc.wins, ties: acc.ties})
     } catch(err) {
         res.status(404).send({error: err});
     }
 }
 
-async function winIncrement(req, res) {//test
+async function winIncrement(req, res) {
     try{
-        await accounts.findOneAndUpdate({}, { $inc: {wins: 1} });//find with object id
+        console.log(req);
+        let searchFor = new mongoose.Types.ObjectId(req.body.userId);
+        let update = await accounts.findOneAndUpdate( {_id: searchFor}, { $inc: {wins: 1} });
+        return res.send({wins: update.wins});
     } catch(err) {
         console.error(err);
     }
 }
 
-async function lossIncrement(req, res) {//test
+async function lossIncrement(req, res) {
     try{
-        await accounts.findOneAndUpdate({}, { $inc: {losses: 1} });
+        let searchFor = new mongoose.Types.ObjectId(req.body.userId);
+        let update = await accounts.findOneAndUpdate( {_id: searchFor}, { $inc: {losses: 1} });
+        return res.send({losses: update.losses});
     } catch(err) {
         console.error(err);
     }
 }
 
-async function tieIncrement(req, res) {//test
+async function tieIncrement(req, res) {
     try{
-        await accounts.findOneAndUpdate({}, { $inc: {ties: 1} });
+        let searchFor = new mongoose.Types.ObjectId(req.body.userId);
+        let update = await accounts.findOneAndUpdate( {_id: searchFor}, { $inc: {ties: 1} });
+        return res.send({wins: update.ties});
     } catch(err) {
         console.error(err);
     }

@@ -3,7 +3,7 @@ SECRET_KEY = 'secret'; //placeholder
 
 function authToken(req, res, next) {
     try {
-        const token = req.headers.authorization;//change?
+        const token = req.headers.authorization;
         if(token) {
             const payload = jwt.verify(submittedToken, SECRET_KEY);
             req.user = payload;
@@ -13,7 +13,5 @@ function authToken(req, res, next) {
         return next(err);
     }
 }
-
-//add function to make sure if user is logged in?
 
 module.exports = {authToken};

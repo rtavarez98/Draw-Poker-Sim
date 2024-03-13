@@ -13,19 +13,37 @@ function App() {
         else return window.localStorage.getItem('token');
     });
 
-    //add loggedIn value?
+    const [userId, setUserId] = useState( () => {
+        if(!window.localStorage.getItem('userId')) return '';
+        else return window.localStorage.getItem('userId');
+    });
 
-    //use useEffect to assign all values to localStorage w/ 'window.localStorage.setItem'
+    const [wins, setWins] = useState( () => {
+        if(!window.localStorage.getItem('wins')) return '';
+        else return window.localStorage.getItem('wins');
+    });
+
+    const [losses, setLosses] = useState( () => {
+        if(!window.localStorage.getItem('losses')) return '';
+        else return window.localStorage.getItem('losses');
+    });
+
+    const [ties, setTies] = useState( () => {
+        if(!window.localStorage.getItem('ties')) return '';
+        else return window.localStorage.getItem('ties');
+    });
+
     useEffect(() => {
         window.localStorage.setItem('token', token);
-    },[token]);
-
-    //move axios calls for logging in + signing in here? (async?)
-    //use useContext so login + register pages can access below
+        window.localStorage.setItem('userId', userId);
+        window.localStorage.setItem('wins', wins);
+        window.localStorage.setItem('losses', losses);
+        window.localStorage.setItem('ties', ties);
+    },[token, userId, wins, losses, ties]);
 
     const loginCall = async (loginData) => {
         try{
-            let res = await axios.get("http://localhost:5000/", { params: {
+            let res = await axios.get("http://localhost:5000/", { params: {//replace localhost w/ something else
                 username: loginData.username,
                 password: loginData.password
             }})
@@ -33,6 +51,10 @@ function App() {
 
             if(typeof res !== "undefined") {
                 setToken(res.data.token);
+                setUserId(res.data.userId);
+                setWins(res.data.wins);
+                setLosses(res.data.losses);
+                setTies(res.data.ties);
             }
         } catch(err) {
             console.error(err);
@@ -42,7 +64,7 @@ function App() {
 
     const registerCall = async (accountData) => {
         try {
-            let res = await axios.post("http://localhost:5000/newAcc", {
+            let res = await axios.post("http://localhost:5000/newAcc", {//replace localhost w/ something else
                 username: accountData.username,
                 password: accountData.password
             })
@@ -50,15 +72,52 @@ function App() {
 
             if(typeof res !== "undefined") {
                 setToken(res.data.token);
+                setUserId(res.data.userId);
+                setWins(res.data.wins);
+                setLosses(res.data.losses);
+                setTies(res.data.ties);
             }
         } catch(err) {
             console.error(err);
         }
     };
 
+    const winCall = async (accountData) => {
+        try{
+            let res = await axios.patch("http://localhost:5000/win", {
+                userId: userId
+            })
+            .then(data => setWins(data.wins));
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    const lossCall = async (accountData) => {
+        try{
+            let res = await axios.patch("http://localhost:5000/loss", {
+                userId: userId
+            })
+            .then(data => setLosses(data.losses));
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    const tieCall = async (accountData) => {
+        try{
+            let res = await axios.patch("http://localhost:5000/tie", {
+                userId: userId
+            })
+            .then(data => setTies(data.ties));
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
     return (
         <BrowserRouter>
-            <UserContext.Provider value={{token, loginCall, registerCall}}>
+            <UserContext.Provider value={{token, loginCall, registerCall, winCall, lossCall, tieCall, userId, wins, losses, ties}}>
                 <Routes>
                     <Route path="/" element={<Home />}/>
                     <Route path="/Game" element={<Game />}/>
