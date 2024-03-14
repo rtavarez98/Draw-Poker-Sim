@@ -53,7 +53,7 @@ function Game() {
         }
 
         console.log(winner.current);//test
-    });
+    },[handP, handO, fold]);
 
     function createDeck() {
         for(var i = 0; i < 4; i++) {
@@ -198,7 +198,8 @@ function Game() {
         There’s a round of betting after the initial deal, then everyone discards however many cards they want (starting with the small blind and moving clockwise).
         Each player gets replacement cards. Then there’s another round of betting.
         Finally, each player who hasn’t folded goes to showdown and the best five card poker hand wins (using traditional poker hand rankings).*/
-        document.getElementById("startBtn").hidden = true;
+        document.getElementById("startBtn").classList.add('collapse');
+        document.getElementById("gameInfo").classList.remove('invisible');
 
         setChipsP(5000);
         setBetP(0);
@@ -221,8 +222,8 @@ function Game() {
 
         //showdown
         if(turns >= 2) {
-            document.getElementById("gameOptions").hidden = true;
-            document.getElementById("gameResult").hidden = false;
+            document.getElementById("gameOptions").classList.add('invisible');
+            document.getElementById("gameResult").classList.remove('invisible');
 
             if(token !== '') {
                 if(winner.current === "opponent wins") {
@@ -240,52 +241,59 @@ function Game() {
     }
 
     /*might have to change the key in the map;
-     occasional bug adding a card to the hand when changing cards;
+    occasional visual bug on change cards;
      move div onClick=pokerTurn() to occur only on button click;
      raise not working correctly*/
     return (
-        <div className="pokerTable">
-            <header className="App-header">
-                <p>Player Chips: {chipsP}</p>
-                <p>Bet: {betP}</p>
-                <div id="handPlayer">
-                    Player Hand
-                    {handP.map((e, index) => (
-                        <input onClick={() => changeCards.push(index)} type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
-                    ))}
-                </div>
+        <div className="flex flex-col items-center h-screen bg-green-800 text-white">
+            <button id="startBtn" className="border rounded bg-black px-[40px] py-[10px] mt-[260px]" onClick={() => poker()}>Start the Game</button>
+            <div id="gameInfo" className="invisible flex items-center flex-col" >
 
-                <p>Opponent Chips: {chipsO}</p>
-                <p>Bet: {betO}</p>
+                <div className="flex flex-col items-center border bg-red-900">
+                    <h1>Opponent</h1>
+                    <div className="flex bg-black px-[40px]">
+                        <p className="pr-[10px]">Chips: {chipsO}</p>
+                        <p>Bet: {betO}</p>
+                    </div>
+                </div>
                 <div id="handOpponent">
-                    Opponent Hand
                     {handO.map((e, index) => (
                         <input type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
                     ))}
                 </div>
 
-                <button id="startBtn" onClick={() => poker()}>
-                    Start The Game
-                </button>
-            </header>
-            <div id="gameOptions" onClick={() => pokerTurn()}>
-                <button onClick={() => bet(betP, setBetP, betO - betP, chipsP, setChipsP)}>
-                    Call
-                </button>
-                <button onClick={() => bet(betP, setBetP, betNum, chipsP, setChipsP)}>
-                    Raise
-                </button>
-                <input type="number" onChange={e => setBetNum(e)} placeholder="Enter Bet Amount"></input>
-                <button onClick={() => setFold(true)}>
-                    Fold
-                </button>
-            </div>
-            <button id="changeBtn" onClick={() => change(handP, setHandP, changeCards)}>
-                Change Cards
-            </button>
-            <div id="gameResult" hidden={true}>
-                {winner.current}
-                <button onClick={() => navigate('/')}>Exit</button>
+                <div className="flex flex-col items-center border bg-red-900">
+                    <h1>Player</h1>
+                    <div className="flex bg-black px-[40px]">
+                        <p className="pr-[10px]">Chips: {chipsP}</p>
+                        <p>Bet: {betP}</p>
+                    </div>
+                </div>
+                <div id="handPlayer">
+                    {handP.map((e, index) => (
+                        <input onClick={() => changeCards.push(index)} type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                    ))}
+                </div>
+
+                <div id="gameOptions" className="flex flex-col text-white" onClick={() => pokerTurn()}>
+                    <button className="border rounded bg-black" onClick={() => bet(betP, setBetP, betO - betP, chipsP, setChipsP)}>
+                        Call
+                    </button>
+                    <button className="border rounded bg-black" onClick={() => bet(betP, setBetP, betNum, chipsP, setChipsP)}>
+                        Raise
+                    </button>
+                    <input type="number" className="border rounded bg-black" onChange={e => setBetNum(e)} placeholder="Enter Bet Amount"></input>
+                    <button className="border rounded bg-black" onClick={() => setFold(true)}>
+                        Fold
+                    </button>
+                    <button id="changeBtn" className="border rounded bg-black" onClick={() => change(handP, setHandP, changeCards)}>
+                        Change Cards
+                    </button>
+                </div>
+                <div id="gameResult" className="invisible">
+                    {winner.current}
+                    <button onClick={() => navigate('/')}>Exit</button>
+                </div>
             </div>
         </div>
   );

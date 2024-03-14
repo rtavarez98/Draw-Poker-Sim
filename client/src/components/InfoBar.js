@@ -22,8 +22,8 @@ function InfoBar() {
 
     /*if(token === '') return component for guest
     else return component for user*/
-    return (
-        <div>
+    return (//change border style
+        <div className="text-white border-[6px] border-x border-t border-yellow-950 bg-yellow-900">
             <button onClick={ () => test()}>Rules</button>
         </div>
     );
