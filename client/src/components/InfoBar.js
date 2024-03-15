@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import UserContext from './../UserContext';
 
@@ -9,23 +9,34 @@ function InfoBar() {
     const {losses} = useContext(UserContext);
     const {ties} = useContext(UserContext);
 
-    //const {userId} = useContext(UserContext);
     /* if logged in, return wins losses ties + button to logout
         if logged out, return button to login(useNavigate)
         return button that shows rule set for both scenarios
     */
-//w+l+t values returning undefined
-    function test() {//remove later
-        if(token === '') console.log("not logged in");
-        else console.log("Wins: " + wins + " Losses: " + losses + " Ties: " + ties);
+
+    function logout() {
+        window.localStorage.setItem('token', '');
+        window.localStorage.setItem('userId', '');
+        window.localStorage.setItem('wins', '');
+        window.localStorage.setItem('losses', '');
+        window.localStorage.setItem('ties', '');
+        window.location.reload();
     }
 
-    /*if(token === '') return component for guest
-    else return component for user*/
-    return (//change border style
-        <div className="text-white border-[6px] border-x border-t border-yellow-950 bg-yellow-900">
-            <button onClick={ () => test()}>Rules</button>
-        </div>
+    if(token === '') { //pulling the last w+l+t values before updating
+        return ( //logged out
+            <div className="text-white border-[6px] border-x border-t border-yellow-950 bg-yellow-900">
+                <button className="border rounded" onClick={() => navigate('/Login')}>Login</button>
+            </div>
+        );
+    }
+    else return ( //logged in
+            <div className="flex flex-row text-white border-[6px] border-x border-t border-yellow-950 bg-yellow-900">
+                <p className="pl-[20px] pr-[10px]">Wins: {wins}</p>
+                <p className="pr-[10px]">Losses: {losses}</p>
+                <p className="pr-[10px]">Ties: {ties}</p>
+                <button className="border rounded" onClick={() => logout()}>Logout</button>
+            </div>
     );
 }
 

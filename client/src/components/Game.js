@@ -51,7 +51,7 @@ function Game() {
                  }
              }
         }
-
+        console.log(handP);//test
         console.log(winner.current);//test
     },[handP, handO, fold]);
 
@@ -185,7 +185,8 @@ function Game() {
         });
 
         setHand(handNew);
-        document.getElementById("changeBtn").hidden = true;
+
+        document.getElementById("changeBtn").classList.add('collapse');
     }
 
     function bet(ante, setAnte, newAnte, chips, setChips) {//min bet should be 100
@@ -223,25 +224,24 @@ function Game() {
         //showdown
         if(turns >= 2) {
             document.getElementById("gameOptions").classList.add('invisible');
-            document.getElementById("gameResult").classList.remove('invisible');
+            document.getElementById("gameResult").classList.remove('collapse');
 
             if(token !== '') {
                 if(winner.current === "opponent wins") {
-                    let res = await lossCall();//test
+                    let res = await lossCall();
                 }
                 else if(winner.current === "player wins") {
-                    let res = await winCall();//test
+                    let res = await winCall();
                 }
                 else {
-                    let res = await tieCall();//test
+                    let res = await tieCall();
                 }
             }
 
         }
     }
 
-    /*might have to change the key in the map;
-    occasional visual bug on change cards;
+    /*
      move div onClick=pokerTurn() to occur only on button click;
      raise not working correctly*/
     return (
@@ -258,7 +258,7 @@ function Game() {
                 </div>
                 <div id="handOpponent">
                     {handO.map((e, index) => (
-                        <input type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                        <input type="image" key={index} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
                     ))}
                 </div>
 
@@ -271,7 +271,7 @@ function Game() {
                 </div>
                 <div id="handPlayer">
                     {handP.map((e, index) => (
-                        <input onClick={() => changeCards.push(index)} type="image" key={e.name} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
+                        <input onClick={() => changeCards.push(index)} type="image" key={index} src={require("../deck/" + e.name + "_of_" + e.suit + "s.png")} alt="card" width="200px" length="250px"/>
                     ))}
                 </div>
 
@@ -290,9 +290,10 @@ function Game() {
                         Change Cards
                     </button>
                 </div>
-                <div id="gameResult" className="invisible">
+                <div id="gameResult" className="collapse">
                     {winner.current}
-                    <button onClick={() => navigate('/')}>Exit</button>
+                    <button className="border rounded bg-black" onClick={() => window.location.reload()}>Play Again</button>
+                    <button className="border rounded bg-black" onClick={() => navigate('/')}>Exit</button>
                 </div>
             </div>
         </div>

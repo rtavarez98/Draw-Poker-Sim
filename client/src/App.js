@@ -18,17 +18,17 @@ function App() {
         else return window.localStorage.getItem('userId');
     });
 
-    const [wins, setWins] = useState( () => {
+    let [wins, setWins] = useState( () => {
         if(!window.localStorage.getItem('wins')) return '';
         else return window.localStorage.getItem('wins');
     });
 
-    const [losses, setLosses] = useState( () => {
+    let [losses, setLosses] = useState( () => {
         if(!window.localStorage.getItem('losses')) return '';
         else return window.localStorage.getItem('losses');
     });
 
-    const [ties, setTies] = useState( () => {
+    let [ties, setTies] = useState( () => {
         if(!window.localStorage.getItem('ties')) return '';
         else return window.localStorage.getItem('ties');
     });
@@ -87,7 +87,8 @@ function App() {
             let res = await axios.patch("http://localhost:5000/win", {
                 userId: userId
             })
-            .then(data => setWins(data.wins));
+            .then(data => setWins(data.data.wins));
+            console.log(wins);//test
         } catch(err) {
             console.error(err);
         }
@@ -98,7 +99,8 @@ function App() {
             let res = await axios.patch("http://localhost:5000/loss", {
                 userId: userId
             })
-            .then(data => setLosses(data.losses));
+            .then(data => setLosses(data.data.losses));
+            console.log(losses);//test
         } catch(err) {
             console.error(err);
         }
@@ -109,7 +111,8 @@ function App() {
             let res = await axios.patch("http://localhost:5000/tie", {
                 userId: userId
             })
-            .then(data => setTies(data.ties));
+            .then(data => setTies(data.data.ties));
+            console.log(ties);//test
         } catch(err) {
             console.error(err);
         }

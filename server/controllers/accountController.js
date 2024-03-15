@@ -18,7 +18,7 @@ async function createAccount(req, res) {
             ties: 0
         });
         let token = jwt.sign({userId: newAcc._id, username: newAcc.username, wins: newAcc.wins, losses: newAcc.wins, ties: newAcc.ties}, SECRET_KEY);
-        res.status(201).send({token, userId: newAcc._id, wins: newAcc.wins, losses: newAcc.wins, ties: newAcc.ties});
+        res.status(201).send({token, userId: newAcc._id, wins: newAcc.wins, losses: newAcc.losses, ties: newAcc.ties});
     } catch(err) {
         res.status(404).send({error: err});
     }
@@ -33,7 +33,7 @@ async function getAccount(req, res) {
         }
 
         let token = jwt.sign({userId: acc._id, username: acc.username, wins: acc.wins, losses: acc.wins, ties: acc.ties}, SECRET_KEY);
-        return res.send({token, userId: acc._id, wins: acc.wins, losses: acc.wins, ties: acc.ties})
+        return res.send({token, userId: acc._id, wins: acc.wins, losses: acc.losses, ties: acc.ties})
     } catch(err) {
         res.status(404).send({error: err});
     }
