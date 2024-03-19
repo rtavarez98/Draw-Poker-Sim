@@ -228,16 +228,27 @@ function Game() {
         document.getElementById("gameResult").classList.remove('collapse');
 
         if(token !== '') {
-            if(winner.current === "opponent wins") {
+            if(winner.current === "Opponent Wins") {
                 let res = await lossCall();
             }
-            else if(winner.current === "player wins") {
+            else if(winner.current === "Player Wins") {
                 let res = await winCall();
             }
             else {
                 let res = await tieCall();
             }
         }
+    }
+
+    function exit() {
+        if(token !== '') { //logged in
+            window.localStorage.setItem('token', '');
+            window.localStorage.setItem('userId', '');
+            window.localStorage.setItem('wins', '');
+            window.localStorage.setItem('losses', '');
+            window.localStorage.setItem('ties', '');
+        }
+        navigate('/');
     }
 
     /*
@@ -293,11 +304,11 @@ function Game() {
                         Change Cards
                     </button>
                 </div>
-                <div id="gameResult" className="collapse flex flex-col">
+                <div id="gameResult" className="collapse flex flex-col items-center">
                     <h1 className="text-[50px] mb-[18px]">{winner.current}</h1>
                     <div className="self-center">
                         <button className="border rounded bg-black px-[26px] py-[6px] mr-[8px]" onClick={() => window.location.reload()}>Play Again</button>
-                        <button className="border rounded bg-red-900 px-[48px] py-[6px] ml-[8px]" onClick={() => navigate('/')}>Exit</button>
+                        <button className="border rounded bg-red-900 px-[48px] py-[6px] ml-[8px]" onClick={() => exit()}>Exit</button>
                     </div>
                 </div>
             </div>

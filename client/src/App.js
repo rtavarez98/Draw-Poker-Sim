@@ -87,8 +87,7 @@ function App() {
             let res = await axios.patch("http://localhost:5000/win", {
                 userId: userId
             })
-            .then(data => setWins(data.data.wins));
-            console.log(wins);//test
+            .then(() => setWins(parseInt(wins) + 1));
         } catch(err) {
             console.error(err);
         }
@@ -99,8 +98,7 @@ function App() {
             let res = await axios.patch("http://localhost:5000/loss", {
                 userId: userId
             })
-            .then(data => setLosses(data.data.losses));
-            console.log(losses);//test
+            .then(() => setLosses(parseInt(losses) + 1));
         } catch(err) {
             console.error(err);
         }
@@ -111,8 +109,7 @@ function App() {
             let res = await axios.patch("http://localhost:5000/tie", {
                 userId: userId
             })
-            .then(data => setTies(data.data.ties));
-            console.log(ties);//test
+            .then(() => setTies(parseInt(ties) + 1));
         } catch(err) {
             console.error(err);
         }

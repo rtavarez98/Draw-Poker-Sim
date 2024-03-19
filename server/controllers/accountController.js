@@ -41,7 +41,6 @@ async function getAccount(req, res) {
 
 async function winIncrement(req, res) {
     try{
-        console.log(req);
         let searchFor = new mongoose.Types.ObjectId(req.body.userId);
         let update = await accounts.findOneAndUpdate( {_id: searchFor}, { $inc: {wins: 1} });
         return res.send({wins: update.wins});
@@ -64,7 +63,7 @@ async function tieIncrement(req, res) {
     try{
         let searchFor = new mongoose.Types.ObjectId(req.body.userId);
         let update = await accounts.findOneAndUpdate( {_id: searchFor}, { $inc: {ties: 1} });
-        return res.send({wins: update.ties});
+        return res.send({ties: update.ties});
     } catch(err) {
         console.error(err);
     }

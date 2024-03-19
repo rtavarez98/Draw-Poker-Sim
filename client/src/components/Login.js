@@ -10,7 +10,7 @@ function Login() {
         password: ""
     });
 
-    const handleSubmit = async e => {//replace localhost w/ something else
+    const handleSubmit = async e => {
         e.preventDefault();
         let res = await loginCall(loginData)
         .then(navigate("/Game"));
