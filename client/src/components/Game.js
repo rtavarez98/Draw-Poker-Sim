@@ -218,7 +218,7 @@ function Game() {
 
         //opponent calls, raises or folds
 
-        if(turns >= 1 || fold == true) {
+        if(turns >= 1 || fold === true) {
             showdown();
         }
     }
@@ -251,11 +251,9 @@ function Game() {
         navigate('/');
     }
 
-    /*
-    when playing game, there's extra white space at bottom of pg
-     */
+    //returns extra space because of the addition of infoBar
     return (
-        <div className="flex flex-col items-center h-[calc(100vh-46px)] bg-green-800 text-white">
+        <div className="flex flex-col items-center min-h-screen bg-green-800 text-white">
             <button id="startBtn" className="border rounded bg-black px-[40px] py-[10px] mt-[260px]" onClick={() => poker()}>Start the Game</button>
             <div id="gameInfo" className="collapse flex items-center flex-col" >
 

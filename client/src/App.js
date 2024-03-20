@@ -8,6 +8,8 @@ import Register from './pages/registerPage';
 import Game from './pages/gamePage';
 
 function App() {
+    document.title = "Draw Poker Sim";
+
     const [token, setToken] = useState( () => {
         if(!window.localStorage.getItem('token')) return '';
         else return window.localStorage.getItem('token');
@@ -43,7 +45,7 @@ function App() {
 
     const loginCall = async (loginData) => {
         try{
-            let res = await axios.get("http://localhost:5000/", { params: {//replace localhost w/ something else
+            let res = await axios.get("https://draw-poker-sim-backend.onrender.com/", { params: {//replace localhost w/ something else
                 username: loginData.username,
                 password: loginData.password
             }})
@@ -64,7 +66,7 @@ function App() {
 
     const registerCall = async (accountData) => {
         try {
-            let res = await axios.post("http://localhost:5000/newAcc", {//replace localhost w/ something else
+            let res = await axios.post("https://draw-poker-sim-backend.onrender.com/newAcc", {//replace localhost w/ something else
                 username: accountData.username,
                 password: accountData.password
             })
@@ -84,7 +86,7 @@ function App() {
 
     const winCall = async (accountData) => {
         try{
-            let res = await axios.patch("http://localhost:5000/win", {
+            let res = await axios.patch("https://draw-poker-sim-backend.onrender.com/win", {
                 userId: userId
             })
             .then(() => setWins(parseInt(wins) + 1));
@@ -95,7 +97,7 @@ function App() {
 
     const lossCall = async (accountData) => {
         try{
-            let res = await axios.patch("http://localhost:5000/loss", {
+            let res = await axios.patch("https://draw-poker-sim-backend.onrender.com/loss", {
                 userId: userId
             })
             .then(() => setLosses(parseInt(losses) + 1));
@@ -106,7 +108,7 @@ function App() {
 
     const tieCall = async (accountData) => {
         try{
-            let res = await axios.patch("http://localhost:5000/tie", {
+            let res = await axios.patch("https://draw-poker-sim-backend.onrender.com/tie", {
                 userId: userId
             })
             .then(() => setTies(parseInt(ties) + 1));

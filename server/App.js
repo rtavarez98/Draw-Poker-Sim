@@ -24,7 +24,7 @@ const connectDB = async () => {
 connectDB();
 
 //verify token
-app.use(authToken);//test
+app.use(authToken);
 
 //routes
 app.use('/', mainRoute);
