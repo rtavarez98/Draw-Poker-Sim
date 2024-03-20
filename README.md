@@ -1,6 +1,7 @@
 # Draw-Poker-Sim
 A web application that lets someone play a game of draw poker
-##Purpose
+
+## Purpose
 A full-stack application that allows a user to play a game of draw poker as either as a registered user or as a guest against an AI opponent.
 Wins, losses, and ties are tracked in a database and displayed to a user if they're logged in. 
 
